@@ -1,0 +1,3 @@
+[submodule "radicalred-savegame-editor"]
+	path = radicalred_savegame_editor
+	url = https://gitlab.com/old22/radicalred-savegame-editor.git
