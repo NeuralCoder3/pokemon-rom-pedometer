@@ -5,11 +5,13 @@ import threading
 import pokebase as pb
 module_species = rr_parser.constants.rr._species
 
+# sync for instance using rclone (or permanently sync via drive tools)
+
 # path to the uncompressed srm (or sav) file
 RR_FILENAME = "saves/RadicalRed 4.1_1636 - Pokemon Fire Red (U)(Squirrels) (patched).srm"
 LOG_FILENAME = "radicalred.log"
-# pokemon_number = 0
-pokemon_number = 3
+pokemon_number = 0
+# pokemon_number = 3
 image_folder = "images"
 if not os.path.exists(image_folder):
     os.mkdir(image_folder)
@@ -63,10 +65,16 @@ import requests
 from io import BytesIO
 from datetime import datetime
 from tkinter.messagebox import showinfo
+import shelve
+
+image_cache = shelve.open("cache")
 
 # name = pb.pokemon(id).name
 # image_url = pb.pokemon(id).sprites.front_default
-image_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"
+if str(pokedex_id) in image_cache:
+    image_url = image_cache[str(pokedex_id)]
+else:
+    image_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"
 # name = f"Pokemon {pokedex_id}"
 name = species_name.capitalize()
 steps = 0
@@ -165,7 +173,8 @@ def load_pokebase_data():
 # loop = asyncio.get_event_loop()
 # loop.create_task(load_pokebase_data())
 # loop.run_until_complete(load_pokebase_data())
-threading.Thread(target=load_pokebase_data).start()
+if str(pokedex_id) not in image_cache:
+    threading.Thread(target=load_pokebase_data).start()
 
 # level
 level_label = tk.Label(root, text=f"Level: {level}")
